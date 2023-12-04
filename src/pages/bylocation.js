@@ -3,6 +3,7 @@ import Head from 'next/head';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
+import Button from 'react-bootstrap/Button';
 import Map from '@components/Map';
 import { icon } from "leaflet"
 import Link from 'next/link';
@@ -12,13 +13,22 @@ import styles from '@styles/Home.module.scss';
 export default function CrimeByLocation() {
   const [location, setLocation] = useState({latitude: 33.419069, longitude: -111.921064});
   const [crimeData, setCrimeData] = useState(null);
+  const [localCrimeData, setLocalCrimeData] = useState(null);
   const [crimeDataLoaded, setCrimeDataLoaded] = useState(false);
 
+  const filterByState = (e,state) => {
+    e.preventDefault()
+    const filteredData = crimeData.filter((crime) => crime.stateStripped.value === state)
+    console.log("filteredData",filteredData)
+    setLocalCrimeData(filteredData)
+  }
+
   const getCrimeData = async () => {
-    const response = await fetch('http://localhost:3001/results');
+    const response = await fetch('http://localhost:8080/getAllCrimes');
     const data = await response.json();
-    console.log(data.bindings);
-    setCrimeData(data.bindings);
+    console.log(data.results.bindings);
+    setCrimeData(data.results.bindings);
+    setLocalCrimeData(data.results.bindings);
     setCrimeDataLoaded(true);
   }
 
@@ -84,7 +94,11 @@ const handleLocationClick = () => {
           </Nav>
         </Container>
       </Navbar>
-          <Map className={styles.homeMap}  center={[location.latitude, location.longitude]} zoom={12}>
+      <Button variant="primary" onClick={(e)=>filterByState(e,"California")}>Show California</Button> {" "}         
+      <Button variant="secondary" onClick={(e)=>filterByState(e,"NewYork")}>Show New York</Button> {" "}      
+      <Button variant="danger" onClick={(e)=>filterByState(e,"Arizona")}>Show Arizona</Button>    <br />
+
+      <Map className={styles.homeMap}  center={[location.latitude, location.longitude]} zoom={12}>
             {({ TileLayer, Marker, Popup }) => (
               <>
                 <TileLayer
@@ -96,7 +110,7 @@ const handleLocationClick = () => {
                     Your current location
                   </Popup>
                 </Marker>
-                {crimeDataLoaded && crimeData.map((crime, index) => (
+                {crimeDataLoaded && localCrimeData.map((crime, index) => (
                   <Marker key={index} position={[crime.latitudeStripped.value, crime.longitudeStripped.value]} icon={crimeIcon}>
                     <Popup>
                       <p><b>State: </b>{crime.stateStripped.value} </p> 

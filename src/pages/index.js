@@ -2,6 +2,7 @@ import Head from 'next/head';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
+import Link from 'next/link';
 
 import styles from '@styles/Home.module.scss';
 import Button  from 'react-bootstrap/Button';
@@ -16,8 +17,8 @@ export default function Home() {
           <Navbar.Brand href="/">CrimeXplorer</Navbar.Brand>
           <Nav className="me-auto">
             <Nav.Link href="/" active>Home</Nav.Link>
-            <Nav.Link href="/heatmap">HeatMap of Crimes</Nav.Link>
-            <Nav.Link href="/bylocation">Crime By Location</Nav.Link>
+            <Nav.Link as={Link} href="/heatmap">HeatMap of Crimes</Nav.Link>
+            <Nav.Link as={Link} href="/bylocation">Crime By Location</Nav.Link>
           </Nav>
         </Container>
       </Navbar>
@@ -26,8 +27,8 @@ export default function Home() {
             <p className={styles.homeDescription}>
               CrimeXplorer is a web application that allows users to explore crime data in the Phoenix, AZ area.
             </p>
-            <Button variant="info" href="/heatmap">View Heatmap</Button>{' '}
-            <Button variant="dark" href="/bylocation">View Crime By Location</Button>
+            <Button variant="info" href="/heatmap">HeatMap of Crimes</Button>{' '}
+            <Button variant="dark" as={Link} href="/bylocation">View Crime By Location</Button>
 
           </Container>
             
